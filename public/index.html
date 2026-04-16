@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -20,7 +22,13 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <span class="navbar-brand mb-0 h1 mx-auto"><i class="fas fa-shield-alt"></i> SurakshaPath</span>
+            <a class="navbar-brand d-flex align-items-center gap-2 mx-auto" href="index.html">
+                <i class="bi bi-shield-fill-check" style="font-size:1.5rem;"></i>
+                <div class="text-start">
+                    SurakshaPath
+                    <small style="display: block; font-size: 0.65rem; opacity: 0.75; line-height: 1;">Campus Safety System</small>
+                </div>
+            </a>
             <span class="badge bg-success" id="connectionStatus">Online</span>
         </div>
     </nav>
@@ -33,13 +41,19 @@
         </div>
         <div class="offcanvas-body">
             <div class="navbar-nav">
-                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-home me-2"></i> Home
+                </a>
+                <a class="nav-link" href="profile.html">
                     <i class="fas fa-user-circle me-2"></i> My Profile
                 </a>
-                <a class="nav-link" href="#map" data-bs-dismiss="offcanvas">
+                <a class="nav-link" href="locate.html">
                     <i class="fas fa-map-marker-alt me-2"></i> Locate User
                 </a>
-                <a class="nav-link" href="#transportSection" data-bs-dismiss="offcanvas">
+                <a class="nav-link" href="guardians.html">
+                    <i class="fas fa-users me-2"></i> Family / Guardian Link
+                </a>
+                <a class="nav-link" href="transport.html">
                     <i class="fas fa-taxi me-2"></i> Transport Facility
                 </a>
                 <hr>
@@ -52,7 +66,7 @@
                     </a>
                 </div>
                 <div id="logoutSection" style="display: none;">
-                    <a class="nav-link text-warning" href="#" onclick="handleLogout()">
+                    <a class="nav-link indigo-text" href="#" onclick="handleLogout()">
                         <i class="fas fa-sign-out-alt me-2"></i> Logout
                     </a>
                 </div>
@@ -71,7 +85,7 @@
         
         <!-- Status Messages -->
         <div class="text-center mb-3">
-            <p id="locationStatus" class="text-muted small"><i class="fas fa-satellite-dish"></i> Fetching location...</p>
+            <p id="locationStatus" class="text-muted small"><i class="fas fa-satellite-dish indigo-text"></i> Fetching location...</p>
             <p id="recordingStatus"><i class="fas fa-microphone"></i> REC Audio Evidence...</p>
         </div>
 
@@ -80,18 +94,6 @@
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="mb-0 indigo-text"><i class="fas fa-route"></i> Smart Travel</h5>
                 <span id="safetyScoreBadge" class="badge bg-success shadow-sm">Score: 100 (Safe)</span>
-            </div>
-
-            <!-- Journey Info Inputs -->
-            <div id="journeyInputs" class="mb-3">
-                <div class="input-group input-group-sm mb-2">
-                    <span class="input-group-text bg-white"><i class="fas fa-location-dot text-primary"></i></span>
-                    <input type="text" id="fromLoc" class="form-control" placeholder="From (Current Location)">
-                </div>
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-white"><i class="fas fa-flag-checkered text-danger"></i></span>
-                    <input type="text" id="toLoc" class="form-control" placeholder="To (Destination)">
-                </div>
             </div>
 
             <div class="timer-container mb-3" id="timerDisplayContainer" style="display: none;">
@@ -115,13 +117,15 @@
                         <input class="form-check-input" type="checkbox" id="smartModeToggle" checked>
                         <label class="form-check-label small" for="smartModeToggle">Smart Mode (Auto-detect delays)</label>
                     </div>
-                    <select class="form-select" id="timeSelect">
+                    <select class="form-select mb-2" id="timeSelect">
                         <option value="5">5 Mins (Hostel to Gate)</option>
                         <option value="10">10 Mins (Library to Hostel)</option>
                         <option value="15">15 Mins (Main Road to Campus)</option>
                         <option value="30">30 Mins (Home)</option>
                     </select>
-                    <button class="btn btn-primary" onclick="startTimer()">Start</button>
+                    <button class="btn btn-primary w-100 py-2 fw-bold" id="startJourneyBtn" onclick="startTimer()">
+                        <i class="fas fa-play me-2"></i> Start
+                    </button>
                 </div>
             </div>
             <button class="btn btn-primary w-100 mt-2" id="safeBtn" style="display:none;" onclick="markSafe()">
@@ -131,8 +135,8 @@
 
         <!-- Primary Emergency Contact (Single Display) -->
         <div class="card feature-card p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-heart text-danger"></i> Emergency Contact</h5>
+            <div class="d-flex justify-content-between align-items-center indigo-text">
+                <h5 class="mb-0"><i class="fas fa-heart indigo-text"></i> Emergency Contact</h5>
                 <span class="badge bg-primary" id="primaryContactName">Guardian</span>
             </div>
             <div class="mt-3 d-flex gap-2">
@@ -145,18 +149,31 @@
 
         <!-- Fake Call Feature -->
         <div class="card feature-card p-3 text-center border-info">
-            <h5><i class="fas fa-phone-alt text-info"></i> Safety Escape</h5>
+            <h5><i class="fas fa-phone-alt indigo-text"></i> Safety Escape</h5>
             <p class="small text-muted">Feeling uncomfortable? Trigger a fake call to excuse yourself.</p>
             <button class="btn btn-primary w-100 text-white fw-bold" onclick="scheduleFakeCall()">
                 <i class="fas fa-phone-incoming"></i> Fake Incoming Call
             </button>
+        </div>
+
+        <!-- Nearby Police Stations -->
+        <div class="card feature-card p-3 mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-3 indigo-text">
+                <h5 class="mb-0"><i class="fas fa-building-shield"></i> Nearby Stations</h5>
+                <button class="btn btn-outline-primary btn-sm rounded-pill" onclick="refreshPoliceStations()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div id="policeStationsList" class="ps-1">
+                <p class="text-muted small text-center my-2">Finding nearest stations...</p>
+            </div>
         </div>
     </div>
 
     <!-- Fake Call Overlay UI -->
     <div id="fakeCallOverlay" class="fake-call-screen">
         <div class="caller-info">
-            <div class="caller-avatar">
+            <div class="caller-avatar indigo-text">
                 <i class="fas fa-user-circle"></i>
             </div>
             <h2 id="fakeCallerName">Mom</h2>
@@ -170,25 +187,6 @@
             <div class="action-btn accept" onclick="endFakeCall()">
                 <i class="fas fa-phone"></i>
                 <span>Accept</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Profile Modal -->
-    <div class="modal fade" id="profileModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-user"></i> My Profile</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <h6>Recent Recordings:</h6>
-                    <div id="profileRecordings">
-                        <p class="text-muted small">No recent recordings available.</p>
-                        <audio id="audioPlayback" controls class="w-100"></audio>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -208,6 +206,18 @@
             </div>
         </div>
     </div>
+    
+    <!-- Floating Chatbot Widget -->
+    <div id="chatbotWindow" class="chatbot-window">
+        <div class="bg-primary text-white p-2 d-flex justify-content-between align-items-center">
+            <span class="small fw-bold"><i class="fas fa-robot me-2"></i>Safety Assistant</span>
+            <i class="fas fa-times cursor-pointer" onclick="toggleChatbot()" style="cursor: pointer;"></i>
+        </div>
+        <iframe src="/chatbot" style="width:100%; height:calc(100% - 40px); border:none;"></iframe>
+    </div>
+    <div class="chatbot-launcher" onclick="toggleChatbot()">
+        <i class="fas fa-robot"></i>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -216,6 +226,6 @@
     <script src="script.js"></script>
 
     <!-- Google Maps API (Replace YOUR_KEY) -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwletCxx5j_345VDtKQxt74iK-31DB4bc&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwletCxx5j_345VDtKQxt74iK-31DB4bc&callback=initMap&v=weekly" async defer></script>
 </body>
 </html>

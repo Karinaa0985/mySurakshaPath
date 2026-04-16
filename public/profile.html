@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SurakshaPath – Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ── Brand tokens — exact match to your app ── */
+    :root {
+      --primary-color:    #4b0082;
+      --secondary-color:  #4b0082;
+      --accent-color:     #a8dadc;
+      --safe-color:       #2a9d8f;
+      --sos-red:          #e63946;
+      --warning-color:    #ff9800;
+      --primary-gradient: linear-gradient(135deg, #4b0082 0%, #6a0dad 100%);
+      --glass-bg:         rgba(255,255,255,0.85);
+
+      /* helpers */
+      --primary-lt:   rgba(75,0,130,0.07);
+      --primary-md:   rgba(75,0,130,0.15);
+      --border-color: rgba(75,0,130,0.14);
+      --muted:        #6c757d;
+      --radius:       14px;
+      --shadow-sm:    0 4px 15px rgba(75,0,130,0.10);
+      --shadow-md:    0 8px 30px rgba(75,0,130,0.18);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f0f9;
+      color: #2d3436;
+      padding-bottom: 48px;
+    }
+
+    /* ── Navbar — matches your existing navbar exactly ── */
+    .navbar-sp {
+      background: var(--secondary-color);
+      padding: 12px 24px;
+      box-shadow: 0 2px 12px rgba(75,0,130,0.3);
+    }
+    .navbar-brand {
+      color: #fff !important;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: 1.25rem;
+      text-decoration: none;
+    }
+    .navbar-brand small {
+      display: block; font-size: 0.65rem;
+      font-weight: 400; opacity: 0.75; line-height: 1;
+    }
+
+    /* ── Profile Header gradient ── */
+    .profile-header {
+      background: var(--primary-gradient);
+      padding: 32px 0 0;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Avatar */
+    .avatar-wrap {
+      position: relative; width: 108px; height: 108px;
+      border-radius: 50%;
+      border: 4px solid rgba(255,255,255,0.9);
+      overflow: hidden; cursor: pointer; flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+    }
+    .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.50);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .2s; border-radius: 50%;
+    }
+    .avatar-wrap:hover .avatar-overlay { opacity: 1; }
+    #photoInput { display: none; }
+
+    .profile-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem; font-weight: 700; color: #fff;
+    }
+    .profile-role {
+      background: rgba(255,255,255,0.2);
+      color: #fff; font-size: 0.72rem; font-weight: 600;
+      padding: 3px 12px; border-radius: 20px; display: inline-block;
+      border: 1px solid rgba(255,255,255,0.35);
+    }
+    .profile-phone { font-size: 0.82rem; color: rgba(255,255,255,0.75); margin-top: 4px; }
+
+    /* Tabs */
+    .profile-tabs { margin-top: 22px; border-bottom: none; }
+    .profile-tabs .nav-link {
+      color: rgba(255,255,255,0.65);
+      border: none; border-bottom: 3px solid transparent;
+      padding: 10px 20px; font-weight: 500; font-size: 0.9rem;
+      transition: color .2s;
+    }
+    .profile-tabs .nav-link.active,
+    .profile-tabs .nav-link:hover {
+      color: #fff;
+      border-bottom-color: var(--accent-color);
+      background: transparent;
+    }
+
+    /* ── Glass Cards ── */
+    .sp-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.45);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .sp-card h5 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600; font-size: 0.95rem;
+      color: var(--primary-color); margin-bottom: 16px;
+    }
+
+    /* Info rows */
+    .info-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 0; border-bottom: 1px solid var(--border-color);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .lbl { color: var(--muted); font-size: 0.8rem; min-width: 120px; }
+    .info-row .val { font-weight: 500; flex: 1; }
+    .info-row .bi  { color: var(--primary-color); font-size: 1.1rem; }
+
+    /* Edit inputs */
+    .edit-input {
+      background: var(--primary-lt);
+      border: 1px solid var(--border-color);
+      border-radius: 8px; color: #2d3436;
+      padding: 7px 12px; font-size: 0.88rem; width: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .edit-input:focus {
+      border-color: var(--primary-color); outline: none;
+      box-shadow: 0 0 0 3px rgba(75,0,130,0.12);
+      background: #fff;
+    }
+    .edit-input:disabled { opacity: 0.65; cursor: not-allowed; }
+
+    /* Buttons */
+    .btn-sp-sm {
+      padding: 5px 16px; font-size: 0.8rem; font-weight: 600;
+      border-radius: 20px; border: none; transition: all .2s; cursor: pointer;
+    }
+    .btn-sp-primary {
+      background: var(--primary-gradient);
+      color: #fff; box-shadow: 0 4px 12px rgba(75,0,130,0.28);
+    }
+    .btn-sp-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-sp-outline {
+      background: transparent;
+      border: 1.5px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+    .btn-sp-outline:hover {
+      background: var(--primary-gradient); color: #fff;
+      box-shadow: 0 4px 12px rgba(75,0,130,0.22);
+    }
+
+    /* Recording cards */
+    .rec-card {
+      background: var(--primary-lt);
+      border: 1px solid var(--border-color);
+      border-radius: 10px; padding: 13px 15px;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 14px;
+      transition: background .2s;
+    }
+    .rec-card:hover { background: var(--primary-md); }
+    .rec-icon {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--primary-md);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: var(--primary-color); font-size: 1.2rem;
+    }
+    .rec-icon.sos-icon { background: rgba(230,57,70,0.12); color: var(--sos-red); }
+    .rec-meta { font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
+    .rec-badge {
+      font-size: 0.62rem; padding: 2px 8px;
+      border-radius: 20px; font-weight: 600; text-transform: uppercase;
+    }
+    .rec-badge.sos   { background: rgba(230,57,70,0.12); color: var(--sos-red); }
+    .rec-badge.timer { background: var(--primary-md); color: var(--primary-color); }
+
+    /* Tracking */
+    .track-item {
+      display: flex; gap: 14px; padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .track-item:last-child { border-bottom: none; }
+    .track-dot {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--primary-lt);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary-color); font-size: 1rem; flex-shrink: 0;
+    }
+    .track-user { font-weight: 600; font-size: 0.88rem; }
+    .track-loc  { font-size: 0.78rem; color: var(--muted); }
+    .track-time { font-size: 0.7rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
+    .guardian-badge {
+      font-size: 0.62rem; padding: 2px 8px; border-radius: 20px;
+      background: rgba(168,218,220,0.3); color: #1a6b6e;
+      border: 1px solid rgba(42,157,143,0.3);
+    }
+
+    /* Password strength */
+    .strength-bar {
+      height: 4px; border-radius: 2px;
+      background: var(--border-color); margin-top: 6px; overflow: hidden;
+    }
+    .strength-fill { height: 100%; border-radius: 2px; transition: width .3s, background .3s; }
+
+    /* Toast */
+    .sp-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #fff; color: #2d3436;
+      border-left: 4px solid var(--primary-color);
+      border-radius: 8px; padding: 12px 18px;
+      font-size: 0.88rem; font-weight: 500;
+      box-shadow: var(--shadow-md);
+      transform: translateY(80px); opacity: 0;
+      transition: all .3s ease; z-index: 9999;
+    }
+    .sp-toast.show { transform: translateY(0); opacity: 1; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f4f0f9; }
+    ::-webkit-scrollbar-thumb { background: rgba(75,0,130,0.2); border-radius: 3px; }
+
+    @media (max-width: 576px) {
+      .profile-tabs .nav-link { padding: 8px 12px; font-size: 0.8rem; }
+      .info-row .lbl { min-width: 90px; }
+      .sp-card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar-sp">
+  <div class="container-fluid d-flex align-items-center position-relative">
+    <a class="navbar-brand d-flex align-items-center gap-2 mx-auto" href="index.html">
+      <i class="bi bi-shield-fill-check" style="font-size:1.5rem;"></i>
+      <div class="text-start">
+        SurakshaPath
+        <small>Campus Safety System</small>
+      </div>
+    </a>
+    <a href="index.html" class="text-white text-decoration-none position-absolute end-0 me-3" style="font-size:0.85rem; opacity:0.8;">
+      <i class="bi bi-arrow-left me-1"></i>Back
+    </a>
+  </div>
+</nav>
+
+<!-- Profile Header -->
+<div class="profile-header">
+  <div class="container">
+    <div class="d-flex align-items-end gap-4">
+
+      <div class="avatar-wrap" onclick="document.getElementById('photoInput').click()">
+        <img id="avatarImg"
+             src="https://ui-avatars.com/api/?name=Karina+Kaur&background=4b0082&color=fff&size=200"
+             alt="Profile Photo"/>
+        <div class="avatar-overlay">
+          <i class="bi bi-camera-fill" style="color:#fff;font-size:1.4rem;"></i>
+        </div>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)"/>
+
+      <div class="pb-3">
+        <div class="profile-name" id="displayName">Karina Kaur</div>
+        <span class="profile-role"><i class="bi bi-shield-fill me-1"></i>Student Guardian</span>
+        <div class="profile-phone">
+          <i class="bi bi-phone me-1"></i><span id="displayPhoneVal">+91 98765 43210</span>
+        </div>
+      </div>
+    </div>
+
+    <ul class="nav profile-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="#" onclick="showTab('details',this);return false;">
+          <i class="bi bi-person me-1"></i>Details
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="showTab('recordings',this);return false;">
+          <i class="bi bi-mic me-1"></i>Recordings
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="showTab('tracking',this);return false;">
+          <i class="bi bi-geo-alt me-1"></i>Tracking
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="showTab('security',this);return false;">
+          <i class="bi bi-lock me-1"></i>Security
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Tab Content -->
+<div class="container py-4">
+
+  <!-- DETAILS -->
+  <div id="tab-details">
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="sp-card">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0"><i class="bi bi-person-circle me-2"></i>Personal Info</h5>
+            <button class="btn-sp-sm btn-sp-outline" id="editBtn" onclick="toggleEdit()">
+              <i class="bi bi-pencil me-1"></i>Edit
+            </button>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-person"></i>
+            <span class="lbl">Full Name</span>
+            <input class="edit-input" id="fieldName" value="Karina Kaur" disabled/>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-envelope"></i>
+            <span class="lbl">Email</span>
+            <input class="edit-input" id="fieldEmail" value="karina@example.com" disabled/>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-phone"></i>
+            <span class="lbl">Mobile No.</span>
+            <input class="edit-input" id="fieldPhone" value="+91 98765 43210" disabled/>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-building"></i>
+            <span class="lbl">College</span>
+            <input class="edit-input" id="fieldCollege" value="PCE, Nagpur" disabled/>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-mortarboard"></i>
+            <span class="lbl">Roll No.</span>
+            <input class="edit-input" id="fieldRoll" value="2021-CE-042" disabled/>
+          </div>
+          <div id="editActions" style="display:none;margin-top:16px;" class="d-flex gap-2">
+            <button class="btn-sp-sm btn-sp-primary" onclick="saveProfile()">
+              <i class="bi bi-check2 me-1"></i>Save Changes
+            </button>
+            <button class="btn-sp-sm btn-sp-outline" onclick="cancelEdit()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="sp-card">
+          <h5><i class="bi bi-people me-2"></i>Emergency Contacts</h5>
+          <div class="info-row">
+            <i class="bi bi-person-heart"></i>
+            <span class="lbl">Guardian 1</span>
+            <span class="val">Harpreet Kaur (Mother)</span>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-telephone"></i>
+            <span class="lbl">Contact</span>
+            <span class="val">+91 98001 12345</span>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-person-heart"></i>
+            <span class="lbl">Guardian 2</span>
+            <span class="val">Rajveer Kaur (Father)</span>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-telephone"></i>
+            <span class="lbl">Contact</span>
+            <span class="val">+91 99887 65432</span>
+          </div>
+        </div>
+
+        <div class="sp-card">
+          <h5><i class="bi bi-bar-chart me-2"></i>Safety Stats</h5>
+          <div class="row text-center g-2 pt-1">
+            <div class="col-4">
+              <div style="font-size:1.9rem;font-weight:700;color:var(--primary-color);">7</div>
+              <div style="font-size:0.72rem;color:var(--muted);">SOS Alerts</div>
+            </div>
+            <div class="col-4">
+              <div style="font-size:1.9rem;font-weight:700;color:var(--safe-color);">12</div>
+              <div style="font-size:0.72rem;color:var(--muted);">Recordings</div>
+            </div>
+            <div class="col-4">
+              <div style="font-size:1.9rem;font-weight:700;color:var(--warning-color);">3</div>
+              <div style="font-size:0.72rem;color:var(--muted);">Guardians</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECORDINGS -->
+  <div id="tab-recordings" style="display:none;">
+    <div class="sp-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0"><i class="bi bi-mic-fill me-2"></i>Past Recordings</h5>
+        <span style="font-size:0.8rem;color:var(--muted);">12 recordings</span>
+      </div>
+      <div id="recordingsList"></div>
+    </div>
+  </div>
+
+  <!-- TRACKING -->
+  <div id="tab-tracking" style="display:none;">
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="sp-card">
+          <h5><i class="bi bi-geo-alt-fill me-2"></i>My Tracking History</h5>
+          <div id="myTrackList"></div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="sp-card">
+          <h5><i class="bi bi-people-fill me-2"></i>Wards' Tracking History</h5>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:16px;">
+            Location history of people you are guardian of.
+          </p>
+          <div id="guardianTrackList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div id="tab-security" style="display:none;">
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="sp-card">
+          <h5><i class="bi bi-lock-fill me-2"></i>Change Password</h5>
+          <div class="mb-3">
+            <label style="font-size:0.82rem;color:var(--muted);display:block;margin-bottom:4px;">Current Password</label>
+            <input type="password" id="currPass" class="edit-input" placeholder="Enter current password"/>
+          </div>
+          <div class="mb-3">
+            <label style="font-size:0.82rem;color:var(--muted);display:block;margin-bottom:4px;">New Password</label>
+            <input type="password" id="newPass" class="edit-input" placeholder="Min 8 characters"
+                   oninput="checkStrength(this.value)"/>
+            <div class="strength-bar">
+              <div class="strength-fill" id="strengthFill" style="width:0%;"></div>
+            </div>
+            <div id="strengthLbl" style="font-size:0.72rem;color:var(--muted);margin-top:4px;"></div>
+          </div>
+          <div class="mb-4">
+            <label style="font-size:0.82rem;color:var(--muted);display:block;margin-bottom:4px;">Confirm New Password</label>
+            <input type="password" id="confPass" class="edit-input" placeholder="Re-enter new password"/>
+          </div>
+          <button class="btn-sp-sm btn-sp-primary"
+                  style="width:100%;padding:10px 0;border-radius:8px;"
+                  onclick="changePassword()">
+            <i class="bi bi-shield-lock me-2"></i>Update Password
+          </button>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="sp-card">
+          <h5><i class="bi bi-shield-check me-2"></i>Account Security</h5>
+          <div class="info-row">
+            <i class="bi bi-clock"></i>
+            <span class="lbl">Last Login</span>
+            <span class="val" id="lastLogin">—</span>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-phone"></i>
+            <span class="lbl">2FA Status</span>
+            <span class="val" style="color:var(--safe-color);">
+              <i class="bi bi-check-circle me-1"></i>Enabled
+            </span>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-globe"></i>
+            <span class="lbl">Active Sessions</span>
+            <span class="val">1 device</span>
+          </div>
+          <div style="margin-top:16px;">
+            <button class="btn-sp-sm btn-sp-outline"
+                    style="width:100%;padding:9px 0;border-radius:8px;"
+                    onclick="showToast('All other sessions terminated.','bi-check2-circle')">
+              <i class="bi bi-box-arrow-right me-2"></i>Sign Out All Devices
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="sp-toast" id="spToast">
+  <i class="bi" id="toastIcon"></i>
+  <span id="toastMsg"></span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── Data ── */
+  const recordings = [
+    { title:'SOS Recording #12', date:'Apr 5, 2026 · 10:42 PM',  dur:'1m 38s', loc:'Near Main Gate, PCE', type:'sos'   },
+    { title:'SOS Recording #11', date:'Mar 28, 2026 · 9:17 PM',  dur:'2m 04s', loc:'Hostel Block B',      type:'sos'   },
+    { title:'Travel Timer #8',   date:'Mar 20, 2026 · 7:55 PM',  dur:'45s',    loc:'Auto Stand, PCE',     type:'timer' },
+    { title:'SOS Recording #10', date:'Mar 15, 2026 · 11:30 PM', dur:'3m 12s', loc:'Library Corridor',    type:'sos'   },
+    { title:'Travel Timer #7',   date:'Mar 10, 2026 · 8:22 PM',  dur:'1m 05s', loc:'Campus Road',         type:'timer' },
+    { title:'SOS Recording #9',  date:'Feb 27, 2026 · 10:05 PM', dur:'55s',    loc:'Canteen Area',        type:'sos'   },
+  ];
+  const myTrack = [
+    { loc:'Main Gate, PCE Nagpur',  time:'Today, 10:48 PM',     icon:'bi-geo-alt-fill'    },
+    { loc:'Hostel Block B, PCE',    time:'Today, 6:30 PM',      icon:'bi-house-fill'      },
+    { loc:'Library, PCE Campus',    time:'Today, 2:15 PM',      icon:'bi-book-fill'       },
+    { loc:'Auto Stand, PCE',        time:'Yesterday, 8:00 PM',  icon:'bi-taxi-front-fill' },
+    { loc:'Classrooms Block C',     time:'Yesterday, 10:00 AM', icon:'bi-building-fill'   },
+  ];
+  const wardTrack = [
+    { name:'Bhakti Pandhare', relation:'Ward', loc:'Hostel Block A, PCE', time:'30 min ago', avatar:'BP' },
+    { name:'Gauri Narlawar',  relation:'Ward', loc:'Main Road, Nagpur',   time:'1 hr ago',   avatar:'GN' },
+    { name:'Bhumi Gupta',     relation:'Ward', loc:'PCE Campus',          time:'2 hrs ago',  avatar:'BG' },
+  ];
+
+  /* ── Render ── */
+  function renderRecordings() {
+    document.getElementById('recordingsList').innerHTML = recordings.map(r => `
+      <div class="rec-card">
+        <div class="rec-icon ${r.type === 'sos' ? 'sos-icon' : ''}">
+          <i class="bi ${r.type === 'sos' ? 'bi-exclamation-triangle-fill' : 'bi-stopwatch-fill'}"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:0.88rem;">
+            ${r.title}
+            <span class="rec-badge ${r.type} ms-2">${r.type.toUpperCase()}</span>
+          </div>
+          <div class="rec-meta"><i class="bi bi-calendar3 me-1"></i>${r.date}</div>
+          <div class="rec-meta"><i class="bi bi-geo me-1"></i>${r.loc} · ${r.dur}</div>
+        </div>
+        <button class="btn-sp-sm btn-sp-outline"
+                onclick="showToast('Playing: ${r.title}','bi-play-circle')">
+          <i class="bi bi-play-fill"></i>
+        </button>
+      </div>`).join('');
+  }
+
+  function renderTracking() {
+    document.getElementById('myTrackList').innerHTML = myTrack.map(t => `
+      <div class="track-item">
+        <div class="track-dot"><i class="bi ${t.icon}"></i></div>
+        <div style="flex:1;"><div class="track-user">${t.loc}</div></div>
+        <div class="track-time">${t.time}</div>
+      </div>`).join('');
+
+    document.getElementById('guardianTrackList').innerHTML = wardTrack.map(w => `
+      <div class="track-item">
+        <div class="track-dot"
+             style="background:rgba(168,218,220,0.22);color:#1a6b6e;font-weight:700;font-size:0.7rem;">
+          ${w.avatar}
+        </div>
+        <div style="flex:1;">
+          <div class="track-user">
+            ${w.name} <span class="guardian-badge ms-1">${w.relation}</span>
+          </div>
+          <div class="track-loc"><i class="bi bi-geo me-1"></i>${w.loc}</div>
+        </div>
+        <div class="track-time">${w.time}</div>
+      </div>`).join('');
+  }
+
+  renderRecordings();
+  renderTracking();
+  document.getElementById('lastLogin').textContent = new Date().toLocaleString();
+
+  /* ── Tabs ── */
+  function showTab(id, el) {
+    ['details','recordings','tracking','security'].forEach(t =>
+      document.getElementById('tab-'+t).style.display = 'none');
+    document.getElementById('tab-'+id).style.display = '';
+    document.querySelectorAll('.profile-tabs .nav-link').forEach(a => a.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  /* ── Edit ── */
+  function toggleEdit() {
+    ['fieldName','fieldEmail','fieldPhone','fieldCollege','fieldRoll']
+      .forEach(id => document.getElementById(id).disabled = false);
+    document.getElementById('editBtn').style.display = 'none';
+    document.getElementById('editActions').style.display = 'flex';
+  }
+  function saveProfile() {
+    ['fieldName','fieldEmail','fieldPhone','fieldCollege','fieldRoll']
+      .forEach(id => document.getElementById(id).disabled = true);
+    document.getElementById('editBtn').style.display = 'inline-block';
+    document.getElementById('editActions').style.display = 'none';
+    document.getElementById('displayName').textContent     = document.getElementById('fieldName').value;
+    document.getElementById('displayPhoneVal').textContent = document.getElementById('fieldPhone').value;
+    showToast('Profile updated successfully!','bi-check2-circle');
+  }
+  function cancelEdit() {
+    ['fieldName','fieldEmail','fieldPhone','fieldCollege','fieldRoll']
+      .forEach(id => document.getElementById(id).disabled = true);
+    document.getElementById('editBtn').style.display = 'inline-block';
+    document.getElementById('editActions').style.display = 'none';
+  }
+
+  /* ── Photo ── */
+  function handlePhotoUpload(e) {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      document.getElementById('avatarImg').src = ev.target.result;
+      showToast('Profile photo updated!','bi-image');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ── Password ── */
+  function checkStrength(v) {
+    let s = 0;
+    if (v.length >= 8)          s++;
+    if (/[A-Z]/.test(v))        s++;
+    if (/[0-9]/.test(v))        s++;
+    if (/[^a-zA-Z0-9]/.test(v)) s++;
+    const colors = ['#e63946','#ff9800','#a8dadc','#2a9d8f'];
+    const labels = ['Weak','Fair','Good','Strong'];
+    document.getElementById('strengthFill').style.width      = (s*25)+'%';
+    document.getElementById('strengthFill').style.background = colors[s-1]||'#ddd';
+    document.getElementById('strengthLbl').textContent       = s>0 ? labels[s-1] : '';
+  }
+  function changePassword() {
+    const curr=document.getElementById('currPass').value,
+          nw  =document.getElementById('newPass').value,
+          cf  =document.getElementById('confPass').value;
+    if (!curr||!nw||!cf) { showToast('Please fill all fields.','bi-exclamation-circle');    return; }
+    if (nw!==cf)         { showToast('Passwords do not match!','bi-x-circle');               return; }
+    if (nw.length<8)     { showToast('Min 8 characters required.','bi-exclamation-circle');  return; }
+    ['currPass','newPass','confPass'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('strengthFill').style.width='0';
+    document.getElementById('strengthLbl').textContent='';
+    showToast('Password updated successfully!','bi-shield-check');
+  }
+
+  /* ── Toast ── */
+  function showToast(msg, icon='bi-info-circle') {
+    const t = document.getElementById('spToast');
+    document.getElementById('toastMsg').textContent = ' '+msg;
+    document.getElementById('toastIcon').className  = 'bi '+icon+' me-1';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #eef2ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(67, 56, 202, 0.15);
+    text-align: center;
+}
+
+.brand-title {
+    color: #4338ca;
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.form-section {
+    display: none;
+}
+
+.form-section.active {
+    display: block;
+}
+
+h3 {
+    color: #3730a3;
+    margin-bottom: 20px;
+}
+
+.sub-text {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #4f46e5;
+}
+
+.btn {
+    width: 100%;
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background-color: #4338ca;
+}
+
+.switch-text {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.switch-text span {
+    color: #4f46e5;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.switch-text span:hover {
+    text-decoration: underline;
+}

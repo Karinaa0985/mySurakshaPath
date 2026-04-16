@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Location | SurakshaPath</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1050;
+            background: white;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+            border: none;
+        }
+        .location-overlay {
+            position: fixed;
+            top: 25px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+    <div id="locationStatus" class="location-overlay">Locating...</div>
+    <div id="map"></div>
+    <div class="sos-container" style="position: fixed; bottom: 40px; left: 0; right: 0;">
+        <button class="btn btn-sos" onclick="triggerSOS()">SOS</button>
+    </div>
+
+    <!-- Evidence Modal -->
+    <div class="modal fade" id="evidenceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">SOS Evidence Recorded</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>A new audio recording has been saved.</p>
+                    <audio id="audioPlayback" controls class="w-100"></audio>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+    <!-- Google Maps API (Shared Key) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwletCxx5j_345VDtKQxt74iK-31DB4bc&callback=initMap&v=weekly" async defer></script>
+</body>
+</html>

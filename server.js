@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
@@ -22,6 +23,19 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
+app.get('/profile', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+});
+
+app.get('/transport', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'transport.html'));
+});
+
+// ✅ Chatbot page route
+app.get('/chatbot', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'chatbot', 'chatboxindex.html'));
 });
 
 app.listen(PORT, () => {
