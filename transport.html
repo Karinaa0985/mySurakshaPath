@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transport Facility | SurakshaPath</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --blue-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        .transport-card {
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+        }
+        .transport-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+        }
+        .card-header-gradient {
+            background: var(--blue-gradient);
+            padding: 25px;
+            color: white;
+            position: relative;
+        }
+        .driver-avatar {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+        .btn-call {
+            background: var(--blue-gradient);
+            border: none;
+            border-radius: 12px;
+            transition: opacity 0.2s;
+        }
+        .btn-call:hover { opacity: 0.9; color: white; }
+    </style>
+</head>
+<body style="background-color: #f8fafc;">
+
+    <!-- Header -->
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center gap-2 mx-auto" href="index.html">
+                <i class="bi bi-shield-fill-check" style="font-size:1.5rem;"></i>
+                <div class="text-start">
+                    SurakshaPath
+                    <small style="display: block; font-size: 0.65rem; opacity: 0.75; line-height: 1;">Campus Safety System</small>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Verified Transport Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="indigo-text fw-bold mb-0"><i class="fas fa-shield-check me-2"></i>Trusted Dashboard</h4>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary btn-sm rounded-pill px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addDriverModal">
+                    <i class="fas fa-plus me-1"></i> Add Driver
+                </button>
+                <a href="index.html" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-bold">
+                    <i class="fas fa-arrow-left me-1"></i> Dashboard
+                </a>
+            </div>
+        </div>
+            
+        <div class="row" id="driverList">
+                <!-- Driver 1 -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card transport-card border-0 shadow-sm h-100">
+                        <div class="card-header-gradient">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="driver-avatar">
+                                    <i class="fas fa-user-tie fa-2x"></i>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold fs-5"><i class="fas fa-star text-warning me-1"></i>4.9</div>
+                                    <small class="opacity-75">150+ Reviews</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold indigo-text mb-1">Rajesh Kumar</h5>
+                            <p class="text-muted small mb-3"><i class="fas fa-car-side me-2"></i>Auto • MH 31 AB 1234</p>
+                            
+                            <div class="d-flex gap-3 mb-4">
+                                <div class="small"><i class="fas fa-briefcase text-primary me-2"></i><strong>8 yrs</strong> Exp</div>
+                                <div class="small text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Verified</div>
+                            </div>
+                            
+                            <a href="tel:+919876543210" class="btn btn-call text-white w-100 py-2 fw-bold">
+                                <i class="fas fa-phone-alt me-2"></i> Contact Driver
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Driver 2 -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card transport-card border-0 shadow-sm h-100">
+                        <div class="card-header-gradient">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="driver-avatar">
+                                    <i class="fas fa-user-tie fa-2x"></i>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold fs-5"><i class="fas fa-star text-warning me-1"></i>4.7</div>
+                                    <small class="opacity-75">85+ Reviews</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold indigo-text mb-1">Suresh Patil</h5>
+                            <p class="text-muted small mb-3"><i class="fas fa-taxi me-2"></i>Taxi • MH 31 XY 5678</p>
+                            
+                            <div class="d-flex gap-3 mb-4">
+                                <div class="small"><i class="fas fa-briefcase text-primary me-2"></i><strong>5 yrs</strong> Exp</div>
+                                <div class="small text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Verified</div>
+                            </div>
+                            
+                            <a href="tel:+919876543211" class="btn btn-call text-white w-100 py-2 fw-bold">
+                                <i class="fas fa-phone-alt me-2"></i> Contact Driver
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Driver 3 -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card transport-card border-0 shadow-sm h-100">
+                        <div class="card-header-gradient">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="driver-avatar">
+                                    <i class="fas fa-user-tie fa-2x"></i>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold fs-5"><i class="fas fa-star text-warning me-1"></i>4.8</div>
+                                    <small class="opacity-75">110+ Reviews</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold indigo-text mb-1">Amit Sharma</h5>
+                            <p class="text-muted small mb-3"><i class="fas fa-car-side me-2"></i>Auto • MH 31 CD 9012</p>
+                            
+                            <div class="d-flex gap-3 mb-4">
+                                <div class="small"><i class="fas fa-briefcase text-primary me-2"></i><strong>10 yrs</strong> Exp</div>
+                                <div class="small text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Verified</div>
+                            </div>
+                            
+                            <a href="tel:+919876543212" class="btn btn-call text-white w-100 py-2 fw-bold">
+                                <i class="fas fa-phone-alt me-2"></i> Contact Driver
+                            </a>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <!-- Campus Shuttle Info -->
+        <div class="card transport-card border-0 shadow-sm p-4 mt-3">
+            <h5 class="indigo-text"><i class="fas fa-bus indigo-text"></i> Campus Shuttle</h5>
+            <p class="small text-muted">Internal shuttle service schedule and live status.</p>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="small fw-bold">Timing:</span>
+                <span class="small text-muted">8:00 AM - 9:00 PM</span>
+            </div>
+            <div class="alert alert-info py-2 small mb-3">
+                <i class="fas fa-location-dot indigo-text me-1"></i> Current Stop: <strong>Hostel Block A</strong>
+            </div>
+            <button class="btn btn-primary w-100" onclick="alert('Redirecting to live tracking...')">
+                <i class="fas fa-map-location-dot me-2"></i> Track Live Location
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Chatbot Widget -->
+    <div id="chatbotWindow" class="chatbot-window">
+        <div class="bg-primary text-white p-2 d-flex justify-content-between align-items-center">
+            <span class="small fw-bold"><i class="fas fa-robot me-2"></i>Safety Assistant</span>
+            <i class="fas fa-times cursor-pointer" onclick="toggleChatbot()" style="cursor: pointer;"></i>
+        </div>
+        <iframe src="/chatbot" style="width:100%; height:calc(100% - 40px); border:none;"></iframe>
+    </div>
+    <div class="chatbot-launcher" onclick="toggleChatbot()">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- Add Driver Modal -->
+    <div class="modal fade" id="addDriverModal" tabindex="-1" aria-labelledby="addDriverModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header card-header-gradient border-0">
+                    <h5 class="modal-title fw-bold" id="addDriverModalLabel">Register New Driver</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="addDriverForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Driver Name</label>
+                            <input type="text" class="form-control" id="driverName" placeholder="e.g. Ramesh Singh" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-muted">Vehicle Type</label>
+                                <select class="form-select" id="vehicleType">
+                                    <option value="Auto">Auto</option>
+                                    <option value="Taxi">Taxi</option>
+                                    <option value="Bus">Bus</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-muted">Plate Number</label>
+                                <input type="text" class="form-control" id="plateNumber" placeholder="MH 31 XX 0000" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-muted">Experience (Years)</label>
+                                <input type="number" class="form-control" id="experience" placeholder="e.g. 5" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-muted">Phone Number</label>
+                                <input type="tel" class="form-control" id="driverPhone" placeholder="+91..." required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-call text-white w-100 py-2 fw-bold mt-2">
+                            Add to Dashboard
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.getElementById('addDriverForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get values
+            const name = document.getElementById('driverName').value;
+            const type = document.getElementById('vehicleType').value;
+            const plate = document.getElementById('plateNumber').value;
+            const exp = document.getElementById('experience').value;
+            const phone = document.getElementById('driverPhone').value;
+            
+            // Create card HTML
+            const driverList = document.getElementById('driverList');
+            const newCard = document.createElement('div');
+            newCard.className = 'col-md-6 col-lg-4 mb-4';
+            newCard.innerHTML = `
+                <div class="card transport-card border-0 shadow-sm h-100">
+                    <div class="card-header-gradient">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="driver-avatar">
+                                <i class="fas fa-user-tie fa-2x"></i>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold fs-5"><i class="fas fa-star text-warning me-1"></i>New</div>
+                                <small class="opacity-75">0 Reviews</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold indigo-text mb-1">${name}</h5>
+                        <p class="text-muted small mb-3"><i class="fas ${type === 'Auto' ? 'fa-car-side' : 'fa-taxi'} me-2"></i>${type} • ${plate}</p>
+                        
+                        <div class="d-flex gap-3 mb-4">
+                            <div class="small"><i class="fas fa-briefcase text-primary me-2"></i><strong>${exp} yrs</strong> Exp</div>
+                            <div class="small text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Verified</div>
+                        </div>
+                        
+                        <a href="tel:${phone}" class="btn btn-call text-white w-100 py-2 fw-bold">
+                            <i class="fas fa-phone-alt me-2"></i> Contact Driver
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            driverList.appendChild(newCard);
+            bootstrap.Modal.getInstance(document.getElementById('addDriverModal')).hide();
+            document.getElementById('addDriverForm').reset();
+        });
+
+        // Chatbot Toggle Logic
+        function toggleChatbot() {
+            const chatWindow = document.getElementById('chatbotWindow');
+            const isVisible = chatWindow.style.display === 'block';
+            chatWindow.style.display = isVisible ? 'none' : 'block';
+        }
+    </script>
+
+
+
+</body>
+</html>

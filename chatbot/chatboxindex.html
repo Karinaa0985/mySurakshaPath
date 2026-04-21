@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SurakshaPath Chatbox</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>🤖 SurakshaPath Assistant</h2>
+            <p>Ask me about road safety or transport.</p>
+        </div>
+        <div id="chat-messages" class="chat-messages"></div>
+        <div class="chat-input-container">
+            <input type="text" id="user-input" placeholder="Type your question...">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+<script src="script.js"></script>
+<script>
+window.quickQuery = function(query) {
+    addMessage(query, true);
+    setTimeout(() => {
+        const response = getBotResponse(query);
+        addMessage(response);
+    }, 500);
+};
+</script>
+</body>
+</html>

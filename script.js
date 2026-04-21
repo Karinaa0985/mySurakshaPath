@@ -9,6 +9,7 @@ let safetyScore = 100;
 let lastLat = null;
 let lastLng = null;
 let movementTicks = 0;
+let guardians = JSON.parse(localStorage.getItem('guardians')) || [];
 
 let mediaRecorder;
 let audioChunks = [];
@@ -18,6 +19,8 @@ window.onload = function() {
     checkLoginState();
     loadPrimaryContact();
     getLocation();
+    refreshPoliceStations();
+    renderGuardians();
 
     // Stop audio playback when the modal is closed (via cross button or clicking outside)
     const evidenceModal = document.getElementById('evidenceModal');
@@ -30,29 +33,51 @@ window.onload = function() {
             }
         });
     }
+
+    // Listen for messages from the chatbot iframe to close itself
+    window.addEventListener('message', (event) => {
+        // Ensure the message is from a trusted origin if the chatbot was external
+        // For same-origin iframes, '*' is fine, but more specific origin is better in production
+        if (event.data === 'closeChatbot') {
+            toggleChatbot(); // Call the function to close the chatbot window
+        }
+    });
 };
 
 // --- 1. Google Maps & Geolocation ---
-function initMap() {
-    // Default to a central location if geo fails initially
-    const defaultLoc = { lat: 28.7041, lng: 77.1025 }; 
-    map = new google.maps.Map(document.getElementById("map"), {
+async function initMap() {
+    if (typeof google === 'undefined') {
+        console.error("Google Maps script failed to load. Check your network or API key.");
+        return;
+    }
+
+    const mapContainer = document.getElementById("map");
+    if (!mapContainer) return;
+
+    // Load required libraries for Advanced Markers
+    const { Map } = await google.maps.importLibrary("maps");
+    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+
+    // Use current userLat/Lng if available, otherwise default
+    const startLoc = { lat: userLat, lng: userLng };
+    map = new Map(mapContainer, {
         zoom: 15,
-        center: defaultLoc,
-        disableDefaultUI: true // Clean look
+        center: startLoc,
+        disableDefaultUI: true, // Clean look
+        mapId: "DEMO_MAP_ID" // Required for AdvancedMarkerElement
     });
-    marker = new google.maps.Marker({
-        position: defaultLoc,
+
+    const pin = new PinElement({
+        background: "#4285F4",
+        borderColor: "white",
+        glyphColor: "white",
+    });
+
+    marker = new AdvancedMarkerElement({
         map: map,
+        position: startLoc,
         title: "You are here",
-        icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: "#4285F4",
-            fillOpacity: 1,
-            strokeWeight: 2,
-            strokeColor: "white",
-        },
+        content: pin.element
     });
 }
 
@@ -64,11 +89,14 @@ function getLocation() {
                 userLng = position.coords.longitude;
                 const pos = { lat: userLat, lng: userLng };
 
-                document.getElementById("locationStatus").innerHTML = 
-                    `<i class="fas fa-map-marker-alt text-success"></i> Location Active: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+                const locStatus = document.getElementById("locationStatus");
+                if (locStatus) {
+                    locStatus.innerHTML = 
+                        `<i class="fas fa-map-marker-alt indigo-text"></i> Location Active: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+                }
 
                 if(map && marker) {
-                    marker.setPosition(pos);
+                    marker.position = pos;
                     map.setCenter(pos);
                 }
             },
@@ -104,7 +132,10 @@ async function triggerSOS() {
     startRecording();
 
     // Show 'I Reached Safely' button to allow stopping the recording manually
-    document.getElementById("safeBtn").style.display = "block";
+    const safeBtn = document.getElementById("safeBtn");
+    if (safeBtn) {
+        safeBtn.style.display = "block";
+    }
 
     // C. Send WhatsApp Message
     const mapLink = `https://www.google.com/maps?q=${userLat},${userLng}`;
@@ -139,7 +170,10 @@ async function startRecording() {
         mediaRecorder = new MediaRecorder(stream);
         audioChunks = [];
 
-        document.getElementById("recordingStatus").style.display = "block";
+        const recStatus = document.getElementById("recordingStatus");
+        if (recStatus) {
+            recStatus.style.display = "block";
+        }
 
         mediaRecorder.ondataavailable = event => {
             if (event.data.size > 0) {
@@ -159,7 +193,7 @@ async function startRecording() {
             // Update all audio playback sources (handles multiple elements with same ID)
             document.querySelectorAll('#audioPlayback').forEach(audio => audio.src = audioUrl);
 
-            // Set completion timestamp and update modal text with date and time
+            // Update modal text if present
             const now = new Date();
             const dateTimeStr = now.toLocaleString();
             const modalBody = document.querySelector('#evidenceModal .modal-body p');
@@ -167,16 +201,20 @@ async function startRecording() {
                 modalBody.innerHTML = `<strong>Recording completed:</strong> ${dateTimeStr}<br>Evidence has been saved to your profile.`;
             }
             
-            // Show Modal and auto-hide after 5 seconds
+            // Show Modal if present and auto-hide after 15 seconds
             const modalEl = document.getElementById('evidenceModal');
-            const evidenceModal = bootstrap.Modal.getOrCreateInstance(modalEl);
-            evidenceModal.show();
+            if (modalEl) {
+                const evidenceModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                evidenceModal.show();
 
-            setTimeout(() => {
-                evidenceModal.hide();
-            }, 15000);
+                setTimeout(() => {
+                    evidenceModal.hide();
+                }, 15000);
+            }
             
-            document.getElementById("recordingStatus").style.display = "none";
+            if (recStatus) {
+                recStatus.style.display = "none";
+            }
         };
 
         mediaRecorder.start();
@@ -196,7 +234,6 @@ function startTimer() {
     movementTicks = 0;
 
     document.getElementById("timerControls").style.display = "none";
-    document.getElementById("journeyInputs").style.display = "none";
     document.getElementById("timerDisplayContainer").style.display = "flex";
     document.getElementById("timerActiveControls").style.display = "flex";
     document.getElementById("safeBtn").style.display = "block";
@@ -329,7 +366,6 @@ function markSafe() {
 
 function resetTimerUI() {
     document.getElementById("timerControls").style.display = "block";
-    document.getElementById("journeyInputs").style.display = "block";
     document.getElementById("timerDisplayContainer").style.display = "none";
     document.getElementById("timerActiveControls").style.display = "none";
     document.getElementById("safeBtn").style.display = "none";
@@ -359,6 +395,122 @@ function callPrimary() {
     window.location.href = `tel:${phone}`;
 }
 
+// --- 9. Guardian Management Logic ---
+function renderGuardians() {
+    const list = document.getElementById('guardianList');
+    if (!list) return;
+
+    list.innerHTML = '';
+    if (guardians.length === 0) {
+        list.innerHTML = '<div class="text-center text-muted py-4 small border rounded bg-light">No guardians linked yet. Click "Add" to authorize a family member.</div>';
+    }
+
+    guardians.forEach((g, index) => {
+        const div = document.createElement('div');
+        div.className = 'driver-item py-2 px-1 border-bottom d-flex justify-content-between align-items-center';
+        div.innerHTML = `
+            <div class="flex-grow-1">
+                <div class="fw-bold small indigo-text">${g.name}</div>
+                <div class="text-muted" style="font-size: 0.7rem;">${g.phone}</div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch" ${g.canTrack ? 'checked' : ''} onchange="toggleTracking(${index})">
+                </div>
+                <button class="btn btn-sm btn-link text-danger p-0" onclick="removeGuardian(${index})"><i class="fas fa-trash-alt"></i></button>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+}
+
+function addGuardian() {
+    const modalEl = document.getElementById('addGuardianModal');
+    if (modalEl) {
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    } else {
+        // Fallback for pages without the modal
+        const name = prompt("Enter Name:");
+        const phone = prompt("Enter Phone Number:");
+        if (name && phone) {
+            guardians.push({ name, phone, canTrack: true });
+            saveGuardians();
+        }
+    }
+}
+
+function saveNewGuardian() {
+    const nameInput = document.getElementById('newGuardianName');
+    const phoneInput = document.getElementById('newGuardianPhone');
+
+    if (nameInput && phoneInput && nameInput.value.trim() && phoneInput.value.trim()) {
+        guardians.push({ name: nameInput.value.trim(), phone: phoneInput.value.trim(), canTrack: true });
+        saveGuardians();
+        bootstrap.Modal.getInstance(document.getElementById('addGuardianModal')).hide();
+        nameInput.value = '';
+        phoneInput.value = '';
+    } else {
+        alert("Please enter both a name and a phone number.");
+    }
+}
+
+function toggleTracking(index) {
+    guardians[index].canTrack = !guardians[index].canTrack;
+    saveGuardians();
+}
+
+function removeGuardian(index) {
+    if (confirm(`Revoke access for ${guardians[index].name}?`)) {
+        guardians.splice(index, 1);
+        saveGuardians();
+    }
+}
+
+function saveGuardians() {
+    localStorage.setItem('guardians', JSON.stringify(guardians));
+    renderGuardians();
+}
+
+// --- 8. Nearby Police Stations Logic ---
+const policeStations = [
+    { name: "Hingna Police Station", address: "Hingna Road, Nagpur", phone: "+91712232041", lat: 21.1039, lng: 79.0021 },
+    { name: "Ambazari Police Station", address: "Amravati Rd, Nagpur", phone: "+91712253131", lat: 21.1401, lng: 79.0435 },
+    { name: "Sitabuldi Police Station", address: "Wardha Rd, Nagpur", phone: "+91712256123", lat: 21.1458, lng: 79.0832 },
+    { name: "MIDC Police Station", address: "MIDC Area, Nagpur", phone: "+91712281123", lat: 21.1150, lng: 78.9950 }
+];
+
+function refreshPoliceStations() {
+    const list = document.getElementById('policeStationsList');
+    if (!list) return;
+
+    list.innerHTML = '<div class="text-center py-3"><div class="spinner-border spinner-border-sm text-primary" role="status"></div><div class="small text-muted mt-1">Locating...</div></div>';
+    
+    // Simulate network delay for a realistic feel
+    setTimeout(() => {
+        list.innerHTML = '';
+        policeStations.forEach(station => {
+            // Rough distance calculation in KM
+            const dist = (Math.sqrt(Math.pow(station.lat - userLat, 2) + Math.pow(station.lng - userLng, 2)) * 111).toFixed(1);
+            
+            const div = document.createElement('div');
+            div.className = 'd-flex justify-content-between align-items-center mb-3 border-bottom pb-2';
+            div.innerHTML = `
+                <div class="flex-grow-1 pe-2">
+                    <div class="fw-bold small indigo-text">${station.name}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">${station.address}</div>
+                    <div class="badge bg-light text-dark fw-normal mt-1" style="font-size: 0.65rem;"><i class="fas fa-location-arrow me-1"></i>${dist} km away</div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="tel:${station.phone}" class="btn btn-sm btn-outline-success rounded-circle shadow-sm" title="Call"><i class="fas fa-phone"></i></a>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}" target="_blank" class="btn btn-sm btn-outline-primary rounded-circle shadow-sm" title="Directions"><i class="fas fa-directions"></i></a>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    }, 1200);
+}
+
 // --- 7. UI Management ---
 function checkLoginState() {
     // Simple simulation of login state using localStorage
@@ -380,4 +532,12 @@ function checkLoginState() {
 function handleLogout() {
     localStorage.setItem("isLoggedIn", "false");
     window.location.href = "register.html";
+}
+
+// --- Chatbot Widget Logic ---
+function toggleChatbot() {
+    const chatWindow = document.getElementById('chatbotWindow');
+    if (!chatWindow) return;
+    const isVisible = chatWindow.style.display === 'block';
+    chatWindow.style.display = isVisible ? 'none' : 'block';
 }

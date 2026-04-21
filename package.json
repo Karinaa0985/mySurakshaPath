@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/Karinaa0985/my-TAA082#readme",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.89.0",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1"
   }
 }
