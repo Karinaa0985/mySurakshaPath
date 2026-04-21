@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # SurakshaPath - Campus Safety Web App
 
 ## Project Description
